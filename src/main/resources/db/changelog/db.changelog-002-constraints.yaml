@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-check-users-rating
+      author: neekostar
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: false
+            sql: >
+              ALTER TABLE users
+              ADD CONSTRAINT users_rating_check
+              CHECK (rating <= 5 AND rating >= 0);
+
+  - changeSet:
+      id: add-check-ads-category
+      author: neekostar
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: false
+            sql: >
+              ALTER TABLE ads
+              ADD CONSTRAINT ads_category_check
+              CHECK (category IN ('ELECTRONICS','FURNITURE','CLOTHING','BOOKS','SPORTS','TOYS','VEHICLES','SERVICES','JOBS','REAL_ESTATE','OTHER'));
+
+  - changeSet:
+      id: add-check-ratings-value
+      author: neekostar
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: false
+            sql: >
+              ALTER TABLE ratings
+              ADD CONSTRAINT ratings_rating_value_check
+              CHECK (rating_value <= 5 AND rating_value >= 1);

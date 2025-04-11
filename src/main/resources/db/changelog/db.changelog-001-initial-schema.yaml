@@ -1,0 +1,432 @@
+# db.changelog-001-initial-schema.yaml
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-roles-table
+      author: neekostar
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 2-create-users-table
+      author: neekostar
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: email
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(50)
+              - column:
+                  name: last_name
+                  type: varchar(50)
+              - column:
+                  name: rating
+                  type: real
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: avatar_url
+                  type: varchar(255)
+              - column:
+                  name: created_at
+                  type: timestamp(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp(6)
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: role_id
+            referencedTableName: roles
+            referencedColumnNames: id
+            constraintName: fkp56c1712k691lhsyewcssf40f
+
+        # (Проблемную addCheckConstraint убрали; вынесем в SQL позже)
+
+  - changeSet:
+      id: 3-create-table-ads
+      author: neekostar
+      changes:
+        - createTable:
+            tableName: ads
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: category
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: city
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: is_promoted
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: numeric(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: promotion_end_date
+                  type: timestamp(6)
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp(6)
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(255)
+                  defaultValue: "ACTIVE"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: varchar(255)
+
+        - addForeignKeyConstraint:
+            baseTableName: ads
+            baseColumnNames: user_id
+            constraintName: fkhjy5cj20i6dn8t38as5poqt7b
+            referencedTableName: users
+            referencedColumnNames: id
+
+        # (checkConstraint на category тоже убираем, сделаем SQL позже)
+
+  - changeSet:
+      id: 4-create-table-comments
+      author: neekostar
+      changes:
+        - createTable:
+            tableName: comments
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: comment_text
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ad_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: comments
+            baseColumnNames: ad_id
+            constraintName: fk8c6328vy3jubusjo17ucraqf1
+            referencedTableName: ads
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: comments
+            baseColumnNames: user_id
+            constraintName: fk8omq0tc18jd43bu5tjh6jvraq
+            referencedTableName: users
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 5-create-table-payment
+      author: neekostar
+      changes:
+        - createTable:
+            tableName: payment
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: amount
+                  type: numeric(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_date
+                  type: timestamp(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ad_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: payment
+            baseColumnNames: ad_id
+            constraintName: fkihy2npo2cej31qhftdvv0xny
+            referencedTableName: ads
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: payment
+            baseColumnNames: user_id
+            constraintName: fkmi2669nkjesvp7cd257fptl6f
+            referencedTableName: users
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 6-create-table-sale_history
+      author: neekostar
+      changes:
+        - createTable:
+            tableName: sale_history
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: sale_date
+                  type: timestamp(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ad_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: buyer_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: seller_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: sale_history
+            baseColumnNames: ad_id
+            constraintName: fksdhvam6ieri8848i7mqjollf9
+            referencedTableName: ads
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: sale_history
+            baseColumnNames: buyer_id
+            constraintName: fkoncnorohpa3gogfsqkavyitvc
+            referencedTableName: users
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: sale_history
+            baseColumnNames: seller_id
+            constraintName: fkbkdx6edwo64vt13y5q5or0xac
+            referencedTableName: users
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 7-create-table-ratings
+      author: neekostar
+      changes:
+        - createTable:
+            tableName: ratings
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rating_value
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: review_text
+                  type: text
+              - column:
+                  name: sale_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: seller_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: ratings
+            baseColumnNames: sale_id
+            constraintName: fkfv71ht4vscimaplq21lpm7i5u
+            referencedTableName: sale_history
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: ratings
+            baseColumnNames: seller_id
+            constraintName: fkl20yhqx69ehajn8u9w506dc7h
+            referencedTableName: users
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: ratings
+            baseColumnNames: user_id
+            constraintName: fkb3354ee2xxvdrbyq9f42jdayd
+            referencedTableName: users
+            referencedColumnNames: id
+
+        # (Удаляем addCheckConstraint - вынесем в SQL)
+
+  - changeSet:
+      id: 8-create-table-messages
+      author: neekostar
+      changes:
+        - createTable:
+            tableName: messages
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message_text
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: receiver_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sender_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: messages
+            baseColumnNames: receiver_id
+            constraintName: fkt05r0b6n0iis8u7dfna4xdh73
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: cascade
+
+        - addForeignKeyConstraint:
+            baseTableName: messages
+            baseColumnNames: sender_id
+            constraintName: fk4ui4nnwntodh6wjvck53dbk9m
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: cascade

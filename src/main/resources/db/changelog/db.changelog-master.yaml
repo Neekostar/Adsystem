@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: classpath:db/changelog/db.changelog-001-initial-schema.yaml
+
+  - include:
+      file: classpath:db/changelog/db.changelog-002-constraints.yaml
+
+  - include:
+      file: classpath:db/changelog/db.changelog-003-data.yaml
